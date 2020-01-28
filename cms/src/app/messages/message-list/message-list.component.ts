@@ -7,7 +7,11 @@ import { Message } from '../messages.model';
   styleUrls: ['./message-list.component.css']
 })
 export class MessageListComponent implements OnInit {
-  messages: Message[] = [];
+  messages: Message[] = [
+    new Message('1', 'Activity', 'tomorrow at 5pm', 'Bro. Jackson'),
+    new Message('3', 'Activity', 'cannot make it at that time', 'Bro. Thayne'),
+    new Message('2', 'Activity', 'how about Friday?', 'Bro. Barzee')
+  ];
 
   constructor() { }
 
