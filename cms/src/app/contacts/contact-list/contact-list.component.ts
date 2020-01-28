@@ -1,6 +1,5 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Contact } from '../contact.model';
-import { EventEmitter } from 'protractor';
 
 @Component({
   selector: 'cms-contact-list',
