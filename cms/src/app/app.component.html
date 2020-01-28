@@ -1,8 +1,12 @@
 <cms-header (selectedFeatureEvent)="switchView($event)"></cms-header>
-<div class="container pull-left">
-  <cms-documents *ngIf="selectedFeature === 'documents'"></cms-documents>
-  <cms-message-list *ngIf="selectedFeature === 'message-list'"></cms-message-list>
-  <cms-contacts *ngIf="selectedFeature === 'contacts'"></cms-contacts>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <cms-documents *ngIf="selectedFeature === 'documents'"></cms-documents>
+      <cms-message-list *ngIf="selectedFeature === 'message-list'"></cms-message-list>
+      <cms-contacts *ngIf="selectedFeature === 'contacts'"></cms-contacts>
+    </div>
+  </div>
 </div>
 
 <!-- To add binding, put attribute inside a bracket []. For the string interpolation wrap it in {}. To treat is like a string wrap it in a single quote-->
