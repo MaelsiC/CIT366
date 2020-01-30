@@ -18,6 +18,7 @@ export class ContactListComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    // console.log(this.contacts);
   }
 
   onSelected(contact: Contact) {
