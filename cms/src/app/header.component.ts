@@ -1,4 +1,5 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+// Output, EventEmitter DELETED FROM IMPORTS
 
 @Component({
   selector: 'cms-header',
@@ -6,12 +7,17 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  @Output() selectedFeatureEvent = new EventEmitter<string>();
+  // REMOVED
+  // @Output() selectedFeatureEvent = new EventEmitter<string>();
+  // //
 
   ngOnInit () {
   }
 
-  onSelected(selectedEvent: string) {
-    this.selectedFeatureEvent.emit(selectedEvent);
-  }
+  // REMOVED 
+  // onSelected(selectedEvent: string) {
+  //   this.selectedFeatureEvent.emit(selectedEvent);
+  // }
+  // //
+  
 }

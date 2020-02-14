@@ -8,16 +8,21 @@ import { DocumentService } from './document.service';
   styleUrls: ['./documents.component.css']
 })
 export class DocumentsComponent implements OnInit {
+  // REMOVED
   selectedDocument: Document;
+  // //
 
+  // REMOVE PARAMETERS
   constructor(private documentService: DocumentService) { }
 
   ngOnInit() {
+    // REMOVED
     this.documentService.documentSelectedEvent.subscribe(
       (document: Document) => {
         this.selectedDocument = document;
       }
     );
   }
+  // //
 
 }
