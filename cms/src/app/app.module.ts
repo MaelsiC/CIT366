@@ -19,6 +19,7 @@ import { DropdownDirective } from './directives/dropdown.directive';
 import { AppRoutingModule } from './app-routing.module';
 import { DocumentViewComponent } from './documents/document-view/document-view.component';
 import { DocumentEditComponent } from './documents/document-edit/document-edit.component';
+import { WinRefService } from './win-ref.service';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,7 @@ import { DocumentEditComponent } from './documents/document-edit/document-edit.c
     BrowserModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [ContactService, DocumentService, MessageService, WinRefService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
