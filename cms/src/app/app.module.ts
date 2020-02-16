@@ -20,6 +20,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { DocumentViewComponent } from './documents/document-view/document-view.component';
 import { DocumentEditComponent } from './documents/document-edit/document-edit.component';
 import { WinRefService } from './win-ref.service';
+import { ContactEditComponent } from './contacts/contact-edit/contact-edit.component';
+import { ContactService } from './contacts/contact.service';
+import { DocumentService } from './documents/document.service';
+import { MessagesService } from './messages/messages.service';
 
 @NgModule({
   declarations: [
@@ -40,12 +44,13 @@ import { WinRefService } from './win-ref.service';
     DropdownDirective,
     DocumentViewComponent,
     DocumentEditComponent,
+    ContactEditComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule
   ],
-  providers: [ContactService, DocumentService, MessageService, WinRefService],
+  providers: [ContactService, DocumentService, MessagesService, WinRefService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

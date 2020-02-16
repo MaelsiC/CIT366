@@ -6,10 +6,12 @@ import { DocumentsComponent } from './documents/documents.component';
 import { DocumentEditComponent } from './documents/document-edit/document-edit.component';
 import { DocumentDetailComponent } from './documents/document-detail/document-detail.component';
 import { MessagesComponent } from './messages/messages.component';
+import { ContactEditComponent } from './contacts/contact-edit/contact-edit.component';
+import { ContactsDetailComponent } from './contacts/contacts-detail/contacts-detail.component';
 
 
 const appRoutes: Routes = [
-  { path: '', redirectTo: '/documents' },
+  { path: '', redirectTo: '/documents', pathMatch: 'full'},
   {
     path: 'documents', component: DocumentsComponent, children: [
       { path: 'new', component: DocumentEditComponent },
@@ -18,7 +20,13 @@ const appRoutes: Routes = [
     ]
   },
   { path: 'messages', component: MessagesComponent },
-  { path: 'contacts', component: ContactsComponent }
+  {
+    path: 'contacts', component: ContactsComponent, children: [
+      { path: 'new', component: ContactEditComponent },
+      { path: ':id', component: ContactsDetailComponent },
+      { path: ':id/edit', component: ContactEditComponent },
+    ]
+  }
 ];
 
 

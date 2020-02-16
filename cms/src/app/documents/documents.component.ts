@@ -9,20 +9,22 @@ import { DocumentService } from './document.service';
 })
 export class DocumentsComponent implements OnInit {
   // REMOVED
-  selectedDocument: Document;
+  // selectedDocument: Document;
   // //
 
   // REMOVE PARAMETERS
-  constructor(private documentService: DocumentService) { }
+  constructor() { }
+  // private documentService: DocumentService
 
   ngOnInit() {
     // REMOVED
-    this.documentService.documentSelectedEvent.subscribe(
-      (document: Document) => {
-        this.selectedDocument = document;
-      }
-    );
-  }
-  // //
+    //   this.documentService.documentSelectedEvent.subscribe(
+    //     (document: Document) => {
+    //       this.selectedDocument = document;
+    //     }
+    //   );
+    // }
+    // //
 
+  }
 }
