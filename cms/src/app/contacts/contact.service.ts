@@ -8,11 +8,15 @@ import 'rxjs';
   providedIn: 'root'
 })
 export class ContactService {
+  maxContactId: number;
 
   // REMOVED contactSelectedEvent = new EventEmitter<Contact>();
   contacts: Contact[] = [];
-  // ADDED 
-  contactChangedEvent = new EventEmitter<Contact[]>();
+  // ADDED then REMOVED
+  // contactChangedEvent = new EventEmitter<Contact[]>();
+
+  // ADDED
+  contactListChangedEvent = new Subject<Contact[]>();
 
   constructor() {
     this.contacts = MOCKCONTACTS;
@@ -32,14 +36,45 @@ export class ContactService {
   }
 
   deleteContact(contact: Contact) {
+    // if (contact === null) {
+    //     return;
+    // }
+    // const pos = this.contacts.indexOf(contact);
+    // if (pos < 0) {
+    //     return;
+    // }
+    // this.contacts.splice(pos, 1);
+    // this.contactListChangedEvent.emit(this.contacts.slice());
+
     if (contact === null) {
-        return;
+      return;
     }
     const pos = this.contacts.indexOf(contact);
     if (pos < 0) {
-        return;
+      return;
     }
     this.contacts.splice(pos, 1);
-    this.contactChangedEvent.emit(this.contacts.slice());
   }
+
+  addContact (newContact: Contact) {
+    if (newContact === undefined || newContact === null) {
+        return;
+    }
+    this.maxContactId++;
+    newContact.id = this.maxContactId.toString();
+    this.contacts.push(newContact);
+   }
+
+   updateContact(originalContact: Contact, newDoc: Contact) {
+    if (originalContact === null || originalContact === undefined || newDoc === null || newDoc === undefined) {
+        return;
+    }
+    const pos = this.contacts.indexOf(originalContact);
+    if (pos < 0) {
+        return;
+    }
+
+    newDoc.id = originalContact.id;
+    this.contacts[pos] = newDoc;
+   }
 }

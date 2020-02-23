@@ -8,6 +8,8 @@ import 'rxjs';
   providedIn: 'root'
 })
 export class DocumentService {
+  maxDocumentId: number;
+
   // new subject object
   documentListChangedEvent = new Subject<Document[]>();
 
@@ -22,6 +24,7 @@ export class DocumentService {
 
   constructor() {
     this.documents = MOCKDOCUMENTS;
+    this.maxDocumentId = this.getMaxId();
   }
 
   getDocument(id: string): Document {
@@ -59,6 +62,38 @@ export class DocumentService {
       return;
     }
     this.documents.splice(pos, 1);
-    this.storeDocuments();
   }
+
+  getMaxId (): number {
+    let maxId = 0;
+    this.documents.forEach((document: Document) => {
+        const currId = +document.id;
+        if (currId > maxId) {
+            maxId = currId;
+        }
+    });
+    return maxId;
+   }
+
+   addDocument (newDoc: Document) {
+    if (newDoc === undefined || newDoc === null) {
+        return;
+    }
+    this.maxDocumentId++;
+    newDoc.id = this.maxDocumentId.toString();
+    this.documents.push(newDoc);
+   }
+
+   updateDocument(originalDoc: Document, newDoc: Document) {
+    if (originalDoc === null || originalDoc === undefined || newDoc === null || newDoc === undefined) {
+        return;
+    }
+    const pos = this.documents.indexOf(originalDoc);
+    if (pos < 0) {
+        return;
+    }
+
+    newDoc.id = originalDoc.id;
+    this.documents[pos] = newDoc;
+   }
 }
