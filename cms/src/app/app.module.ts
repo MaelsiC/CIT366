@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { ContactsComponent } from './contacts/contacts.component';
@@ -24,6 +25,7 @@ import { ContactEditComponent } from './contacts/contact-edit/contact-edit.compo
 import { ContactService } from './contacts/contact.service';
 import { DocumentService } from './documents/document.service';
 import { MessagesService } from './messages/messages.service';
+import { DndModule } from 'ng2-dnd';
 
 @NgModule({
   declarations: [
@@ -48,7 +50,9 @@ import { MessagesService } from './messages/messages.service';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule,
+    DndModule.forRoot()
   ],
   providers: [ContactService, DocumentService, MessagesService, WinRefService],
   bootstrap: [AppComponent]
