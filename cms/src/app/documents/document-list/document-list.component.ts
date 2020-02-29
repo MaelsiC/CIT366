@@ -25,6 +25,7 @@ export class DocumentListComponent implements OnInit {
     this.documents = this.documentService.getDocuments();
      this.subscription = this.documentService.documentListChangedEvent
       .subscribe((documents: Document[]) => {
+        console.log(documents)
         this.documents = documents;
       });
   }
