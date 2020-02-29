@@ -62,6 +62,7 @@ export class DocumentService {
       return;
     }
     this.documents.splice(pos, 1);
+    this.documentListChangedEvent.next(this.documents.slice());
   }
 
   getMaxId (): number {

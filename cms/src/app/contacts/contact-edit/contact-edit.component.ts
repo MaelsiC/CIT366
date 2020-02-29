@@ -16,7 +16,7 @@ export class ContactEditComponent implements OnInit {
   editMode: boolean = false;
   hasGroup: boolean = false;
   originalContact: Contact;
-  invalidGroupContact: boolean;
+  invalidGroupContact: boolean = false;
 
   constructor(private contactService: ContactService,
     private router: Router,
@@ -38,8 +38,11 @@ export class ContactEditComponent implements OnInit {
       this.editMode = true;
       this.contact = JSON.parse(JSON.stringify(this.originalContact));
 
-      if (this.contact.group !== null && this.contact.group !==undefined){
-        this.groupContacts = [...this.contact.group];
+      // if (this.contact.group !== null && this.contact.group !==undefined){
+      //   this.groupContacts = [...this.contact.group];
+
+      if (this.contact.group) {
+        this.groupContacts = this.contact.group.slice();
       }
     });
   }
@@ -55,7 +58,7 @@ export class ContactEditComponent implements OnInit {
       this.contactService.addContact(newContact);
     }
 
-    this.router.navigate(['/contacts'], {relativeTo: this.route});
+    this.router.navigate(['/contacts']);
   }
 
   onCancel() {
@@ -63,11 +66,8 @@ export class ContactEditComponent implements OnInit {
   }
 
   isInvalidContact(newContact: Contact) {
-    if (!newContact) {
-      return true;
-    }
-
-    if (newContact.id === this.contact.id) {
+    console.log('isInvalidContact called')
+    if (!newContact || newContact.id === this.contact.id) {
       return true;
     }
 
@@ -80,6 +80,7 @@ export class ContactEditComponent implements OnInit {
   }
 
   addToGroup($event: any) {
+    console.log('addToGroup called')
     let selectedContact: Contact = $event.dragData;
     this.invalidGroupContact = this.isInvalidContact(selectedContact);
     if (this.invalidGroupContact) {
@@ -90,6 +91,7 @@ export class ContactEditComponent implements OnInit {
   }
 
   onRemoveItem(idx: number) {
+    console.log('onRemoveItem called')
     if (idx < 0 || idx >= this.groupContacts.length)
     return;
 

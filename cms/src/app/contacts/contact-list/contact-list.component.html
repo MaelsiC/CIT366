@@ -15,7 +15,7 @@
           <div class="col-xs-12 margin-top">
             <!-- Delete (click)="onSelected(contact)" -->
             <cms-contact-item *ngFor="let contact of contacts" [contact]="contact"
-            dnd-draggable draggable="true" [dragData]="contact" [dropZones]="['contactGroup']">
+            dnd-draggable [dragEnabled]="true" [dragData]="contact" [dropZones]="['contactGroup']">
             </cms-contact-item>
           </div>
         </div>
