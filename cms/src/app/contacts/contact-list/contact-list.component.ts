@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./contact-list.component.css']
 })
 export class ContactListComponent implements OnInit {
+  term: string = '';
   subscription: Subscription;
   contacts: Contact[] = [];
 
@@ -22,9 +23,10 @@ export class ContactListComponent implements OnInit {
     // this.contacts = this.contactService.getContacts();
     // console.log(this.contacts);
 
-    this.contacts = this.contactService.getContacts();
+    this.contactService.getContacts();
     this.subscription = this.contactService.contactListChangedEvent
     .subscribe((contacts: Contact[]) => {
+      console.log(contacts)
       this.contacts = contacts;
     });
   }
@@ -38,6 +40,10 @@ export class ContactListComponent implements OnInit {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  onKeyPress(value: string) {
+    this.term = value;
   }
 
 }
