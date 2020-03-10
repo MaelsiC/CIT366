@@ -40,7 +40,7 @@ export class ContactService {
   // }
   //WITH
   getContacts() {
-    this.http.get('https://samplecms-f2b88.firebaseio.com/documents.json')
+    this.http.get('https://samplecms-f2b88.firebaseio.com/contacts.json')
       .subscribe((contacts: Contact[]) => {
         this.contacts = contacts;
         this.maxContactId = this.getMaxId();
