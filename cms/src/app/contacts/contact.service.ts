@@ -3,6 +3,7 @@ import { Contact } from './contact.model';
 import { MOCKCONTACTS } from './MOCKCONTACTS';
 import { Subject } from 'rxjs';
 import 'rxjs';
+import 'rxjs/Rx';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 @Injectable({
@@ -40,22 +41,32 @@ export class ContactService {
   // }
   //WITH
   getContacts() {
-    this.http.get('https://samplecms-f2b88.firebaseio.com/contacts.json')
-      .subscribe((contacts: Contact[]) => {
-        this.contacts = contacts;
-        this.maxContactId = this.getMaxId();
+    // this.http.get('http://localhost:3000/contacts')
+    //   .subscribe((contacts: Contact[]) => {
+    //     this.contacts = contacts;
+    //     this.maxContactId = this.getMaxId();
+    //     this.contacts.sort(this.compareContact);
+    //     this.contactListChangedEvent.next(this.contacts.slice());
+    //     console.log("here it is!");
+    //   },
+
+    //    (error: any) => {
+    //       console.log(error);
+    //     });
+    this
+      .http
+      .get<{ message: string, contacts: Contact[] }>('http://localhost:3000/contacts')
+      .subscribe((response: any) => {
+        this.contacts = response.contacts;
         this.contacts.sort(this.compareContact);
         this.contactListChangedEvent.next(this.contacts.slice());
-        console.log("here it is!");
-      },
-
-       (error: any) => {
-          console.log(error);
-        });
+      }, (err: any) => {
+        console.error(err);
+      });
   }
 
   compareContact(currentcon: Contact, nextcon: Contact): number {
-    if(currentcon.id < nextcon.id) {
+    if (currentcon.id < nextcon.id) {
       return -1;
     } else if (currentcon.id > nextcon.id) {
       return 1;
@@ -86,53 +97,135 @@ export class ContactService {
     // }
     // this.contacts.splice(pos, 1);
 
-    if (contact === null) {
+    // REPLACED
+    // if (contact === null) {
+    //   return;
+    // }
+    // const pos = this.contacts.indexOf(contact);
+    // if (pos < 0) {
+    //   return;
+    // }
+    // this.contacts.splice(pos, 1);
+    // // this.contactListChangedEvent.next(this.contacts.slice());
+    // this.storeContacts();
+    // WITH
+    if (!contact) {
       return;
     }
-    const pos = this.contacts.indexOf(contact);
-    if (pos < 0) {
-      return;
-    }
-    this.contacts.splice(pos, 1);
-    // this.contactListChangedEvent.next(this.contacts.slice());
-    this.storeContacts();
+
+    this.http.delete('http://localhost:3000/documents/' + contact.id)
+      .subscribe(
+        (contacts: Contact[]) => {
+          this.contacts = contacts;
+          this.contactListChangedEvent.next(this.contacts.slice());
+        }
+      );
   }
 
-  addContact (newContact: Contact) {
-    if (newContact === undefined || newContact === null) {
-        return;
-    }
-    this.maxContactId++;
-    newContact.id = this.maxContactId.toString();
-    this.contacts.push(newContact);
-    // const contactListClone = this.contacts.slice();
-    // this.contactListChangedEvent.next(contactListClone);
-    this.storeContacts();
-   }
+  // REPLACED
+  // addContact (newContact: Contact) {
+  //   if (newContact === undefined || newContact === null) {
+  //       return;
+  //   }
+  //   this.maxContactId++;
+  //   newContact.id = this.maxContactId.toString();
+  //   this.contacts.push(newContact);
+  //   // const contactListClone = this.contacts.slice();
+  //   // this.contactListChangedEvent.next(contactListClone);
+  //   this.storeContacts();
+  //  }
 
-   updateContact(originalContact: Contact, newDoc: Contact) {
-    if (originalContact === null || originalContact === undefined || newDoc === null || newDoc === undefined) {
-        return;
+  //  updateContact(originalContact: Contact, newDoc: Contact) {
+  //   if (originalContact === null || originalContact === undefined || newDoc === null || newDoc === undefined) {
+  //       return;
+  //   }
+  //   const pos = this.contacts.indexOf(originalContact);
+  //   if (pos < 0) {
+  //       return;
+  //   }
+
+  //   newDoc.id = originalContact.id;
+  //   this.contacts[pos] = newDoc;
+  //   // const contactListClone = this.contacts.slice();
+  //   // this.contactListChangedEvent.next(contactListClone);
+  //   this.storeContacts();
+  //  }
+  // WITH
+  addContact(contact: Contact) {
+    if (!contact) {
+      return;
     }
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    contact.id = '';
+    const strContact = JSON.stringify(contact);
+
+    // this.http.post('http://localhost:3000/documents', strContact, {headers: headers})
+    //   .subscribe(
+    //     (contacts: Contact[]) => {
+    //       this.contacts = contacts;
+    //       this.contactListChangedEvent.next(this.contacts.slice());
+    //     }
+    //   );
+    this.http
+      .post<{ message: string, contact: Contact }>('http://localhost:3000/contacts', strContact, { headers: headers })
+      .subscribe((response: any) => {
+        this.contacts.push(response.contact);
+        this.contacts.sort(this.compareContact);
+        this.contactListChangedEvent.next(this.contacts.slice());
+      });
+  }
+
+  updateContact(originalContact: Contact, newContact: Contact) {
+    if (!originalContact || !newContact) {
+      return;
+    }
+
     const pos = this.contacts.indexOf(originalContact);
     if (pos < 0) {
-        return;
+      return;
     }
 
-    newDoc.id = originalContact.id;
-    this.contacts[pos] = newDoc;
-    // const contactListClone = this.contacts.slice();
-    // this.contactListChangedEvent.next(contactListClone);
-    this.storeContacts();
-   }
-
-   storeContacts() {
-    const cons = JSON.stringify(this.contacts);
-    const header = new HttpHeaders({'Content-Type': 'application/json'});
-    this.http.put('https://samplecms-f2b88.firebaseio.com/contacts.json', cons, {
-      headers: header
-    }).subscribe(() => {
-      this.contactListChangedEvent.next(this.contacts.slice());
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
     });
+
+    newContact.id = originalContact.id;
+
+    this.http.put('http://localhost:3000/documents/' + originalContact.id, newContact, { headers: headers })
+      .subscribe(
+        (contacts: Contact[]) => {
+          this.contacts = contacts;
+          this.contactListChangedEvent.next(this.contacts.slice());
+        }
+      );
+    // this.http
+    // .put<{message: string}>(`http://localhost:3000/contacts/${originalContact.id}`, strContact, {headers: headers})
+    // .subscribe((Response: any) => {
+    //   this.getContacts();
+    // });
+  }
+
+  storeContacts() {
+    // const cons = JSON.stringify(this.contacts);
+    // const header = new HttpHeaders({'Content-Type': 'application/json'});
+    // this.http.put('https://samplecms-f2b88.firebaseio.com/contacts.json', cons, {
+    //   headers: header
+    // }).subscribe(() => {
+    //   this.contactListChangedEvent.next(this.contacts.slice());
+    // });
+    const json = JSON.stringify(this.contacts);
+    const header = new HttpHeaders();
+    header.set('Content-Type', 'application/json');
+    this
+      .http
+      .put<{ message: string }>('http://localhost:3000/contacts', json, {
+        headers: header
+      }).subscribe(() => {
+        this.contactListChangedEvent.next(this.contacts.slice());
+      });
   }
 }

@@ -3,6 +3,7 @@ import { Document } from './document.model';
 import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
 import { Subject } from 'rxjs';
 import 'rxjs';
+import 'rxjs/Rx';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 @Injectable({
@@ -44,7 +45,7 @@ export class DocumentService {
   // }
   // SUBSTITUTE WITH
   getDocuments() {
-    this.http.get('https://samplecms-f2b88.firebaseio.com/documents.json')
+    this.http.get('http://localhost:3000/documents')
       .subscribe((documents: Document[]) => {
         this.documents = documents;
         this.maxDocumentId = this.getMaxId();
@@ -52,13 +53,13 @@ export class DocumentService {
         this.documentListChangedEvent.next(this.documents.slice());
       },
 
-       (error: any) => {
+        (error: any) => {
           console.log(error);
         });
   }
 
   compareDocument(currentdoc: Document, nextdoc: Document): number {
-    if(currentdoc.id < nextdoc.id) {
+    if (currentdoc.id < nextdoc.id) {
       return -1;
     } else if (currentdoc.id > nextdoc.id) {
       return 1;
@@ -81,18 +82,36 @@ export class DocumentService {
     //  }
     // //
 
-    if (document === null || document === undefined) {
+    // REPLACED
+    // if (document === null || document === undefined) {
+    //   return;
+    // }
+    // const pos = this.documents.indexOf(document);
+    // if (pos < 0) {
+    //   return;
+    // }
+    // this.documents.splice(pos, 1);
+    // // SUBSTITUTE
+    // // this.documentListChangedEvent.next(this.documents.slice());
+    // // WITH
+    // this.storeDocuments();
+    // WITH
+    if (!document) {
       return;
     }
+
     const pos = this.documents.indexOf(document);
     if (pos < 0) {
       return;
     }
-    this.documents.splice(pos, 1);
-    // SUBSTITUTE
-    // this.documentListChangedEvent.next(this.documents.slice());
-    // WITH
-    this.storeDocuments();
+
+    this.http.delete('http://localhost:3000/documents/' + document.id)
+      .subscribe(
+        (documents: Document[]) => {
+          this.documents = documents;
+          this.documentListChangedEvent.next(this.documents.slice());
+        }
+      );
   }
 
   getMaxId(): number {
@@ -106,46 +125,105 @@ export class DocumentService {
     return maxId;
   }
 
-  addDocument(newDoc: Document) {
-    if (newDoc === undefined || newDoc === null) {
+  //REPLACED
+  // addDocument(newDoc: Document) {
+  //   if (newDoc === undefined || newDoc === null) {
+  //     return;
+  //   }
+  //   this.maxDocumentId++;
+  //   newDoc.id = this.maxDocumentId.toString();
+  //   this.documents.push(newDoc);
+  //   console.log('hello')
+  //   // const documentListClone = this.documents.slice();
+  //   // SUBSTITUTE
+  //   // this.documentListChangedEvent.next(documentListClone);
+  //   // WITH
+  //   this.storeDocuments();
+  // }
+  // WITH
+  addDocument(document: Document) {
+    if (!document) {
       return;
     }
-    this.maxDocumentId++;
-    newDoc.id = this.maxDocumentId.toString();
-    this.documents.push(newDoc);
-    console.log('hello')
-    // const documentListClone = this.documents.slice();
-    // SUBSTITUTE
-    // this.documentListChangedEvent.next(documentListClone);
-    // WITH
-    this.storeDocuments();
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    document.id = '';
+    const strDocument = JSON.stringify(document);
+
+    this.http.post('http://localhost:3000/documents', strDocument, { headers: headers })
+      .subscribe(
+        (documents: Document[]) => {
+          this.documents = documents;
+          this.documents.sort(this.compareDocument);
+          this.documentListChangedEvent.next(this.documents.slice());
+        }
+      );
   }
 
+  // REPLACED
+  // updateDocument(originalDoc: Document, newDoc: Document) {
+  //   if (originalDoc === null || originalDoc === undefined || newDoc === null || newDoc === undefined) {
+  //     return;
+  //   }
+  //   const pos = this.documents.indexOf(originalDoc);
+  //   if (pos < 0) {
+  //     return;
+  //   }
+
+  //   newDoc.id = originalDoc.id;
+  //   this.documents[pos] = newDoc;
+  //   // const documentListClone = this.documents.slice();
+  //   // SUBSTITUTE
+  //   // this.documentListChangedEvent.next(documentListClone);
+  //   // WITH
+  //   this.storeDocuments();
+  // }
+  // WITH
   updateDocument(originalDoc: Document, newDoc: Document) {
-    if (originalDoc === null || originalDoc === undefined || newDoc === null || newDoc === undefined) {
+    if (!originalDoc || !newDoc) {
       return;
     }
+
     const pos = this.documents.indexOf(originalDoc);
     if (pos < 0) {
       return;
     }
 
-    newDoc.id = originalDoc.id;
-    this.documents[pos] = newDoc;
-    // const documentListClone = this.documents.slice();
-    // SUBSTITUTE
-    // this.documentListChangedEvent.next(documentListClone);
-    // WITH
-    this.storeDocuments();
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    const strDocument = JSON.stringify(newDoc);
+
+    this.http.patch('http://localhost:3000/documents/' + originalDoc.id, strDocument, { headers: headers })
+      .subscribe(
+        (documents: Document[]) => {
+          this.documents = documents;
+          this.documentListChangedEvent.next(this.documents.slice());
+        }
+      );
   }
 
   storeDocuments() {
-    const docs = JSON.stringify(this.documents);
-    const header = new HttpHeaders({'Content-Type': 'application/json'});
-    this.http.put('https://samplecms-f2b88.firebaseio.com/documents.json', docs, {
-      headers: header
-    }).subscribe(() => {
-      this.documentListChangedEvent.next(this.documents.slice());
-    });
+    // const docs = JSON.stringify(this.documents);
+    // const header = new HttpHeaders({ 'Content-Type': 'application/json' });
+    // this.http.put('https://samplecms-f2b88.firebaseio.com/documents.json', docs, {
+    //   headers: header
+    // }).subscribe(() => {
+    //   this.documentListChangedEvent.next(this.documents.slice());
+    // });
+    const json = JSON.stringify(this.documents);
+    const header = new HttpHeaders();
+    header.set('Content-Type', 'application/json');
+    this
+      .http
+      .put<{ message: string }>('http://localhost:3000/documents', json, {
+        headers: header
+      }).subscribe(() => {
+        this.documentListChangedEvent.next(this.documents.slice());
+      });
   }
 }
