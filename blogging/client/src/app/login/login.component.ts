@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
+  providers: [ LoginService ]
 })
 export class LoginComponent {
 
@@ -23,15 +24,14 @@ export class LoginComponent {
         if(result['status'] === 'success') {
           this.router.navigate(['/home']);
         } else {
-          alert('Wrong username or password');
+          alert('Wrong username password');
         }
         
       }, error => {
         console.log('error is ', error);
-        this.router.navigate(['/home'])
       });
   	} else {
-  		alert('enter username and password');
+  		alert('enter user name and password');
   	}
   }
 
