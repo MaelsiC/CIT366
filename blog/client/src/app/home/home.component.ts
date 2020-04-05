@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import { CommonService } from '../service/common.service';
 import { Router } from '@angular/router';
 
@@ -17,7 +17,7 @@ export class HomeComponent {
             this.router.navigate(['/']);
         }
 
-        this.commonService.postEdit_Observable.subscribe(res => {
+        this.commonService.postEdit_Observable.subscribe(() => {
             this.addBtn.nativeElement.click();
         });
 
